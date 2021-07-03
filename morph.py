@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
+import PyQt5.sip
 import os
 
 class Ui_Form(object):
@@ -7,8 +8,11 @@ class Ui_Form(object):
         #UI Setup
         Form.setObjectName("Form")
         Form.resize(390, 280)
-        Form.setMaximumSize(390, 280)
-        Form.setMinimumSize(390, 280)
+        Form.setMaximumSize(350, 10)
+        Form.setMinimumSize(350, 370)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("Resources/Icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        Form.setWindowIcon(icon)
         self.gridLayout = QtWidgets.QGridLayout(Form)
         self.gridLayout.setObjectName("gridLayout")
         self.label_4 = QtWidgets.QLabel(Form)
@@ -16,6 +20,9 @@ class Ui_Form(object):
         self.gridLayout.addWidget(self.label_4, 3, 0, 1, 2)
         self.label = QtWidgets.QLabel(Form)
         self.label.setObjectName("label")
+        self.label.setPixmap(QtGui.QPixmap("Resources/Logo.png"))
+        self.label.setScaledContents(True)
+        self.label.setMaximumSize(350,150)
         self.gridLayout.addWidget(self.label, 0, 0, 1, 3)
         self.label_7 = QtWidgets.QLabel(Form)
         self.label_7.setObjectName("label_7")
@@ -49,6 +56,9 @@ class Ui_Form(object):
         self.btnConvert = QtWidgets.QPushButton(Form)
         self.btnConvert.setMinimumSize(QtCore.QSize(0, 40))
         self.btnConvert.setObjectName("bntConvert")
+        icon.addPixmap(QtGui.QPixmap("Resources/refresh.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.btnConvert.setIcon(icon)
+        self.btnConvert.setIconSize(QtCore.QSize(16, 16 ))
         self.gridLayout.addWidget(self.btnConvert, 7, 0, 1, 3)
         self.lblPath = QtWidgets.QLabel(Form)
         self.lblPath.setObjectName("label_3")
@@ -62,13 +72,12 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "Morph"))
         self.label_4.setText(_translate("Form", "<html><head/><body><p><span style=\" font-weight:600;\">File Location:</span></p></body></html>"))
-        self.label.setText(_translate("Form", "<html><head/><body><p align=\"center\"><span style=\" font-size:28pt; font-weight:600;\">LOGO HERE</span></p></body></html>"))
         self.label_7.setText(_translate("Form", "<html><head/><body><p><span style=\" font-weight:600;\">Select conversion format:</span></p></body></html>"))
         self.label_2.setText(_translate("Form", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600; color:#555753;\">CONVERT VIDEOS TO ANY SPECIFIED FORMAT</span></p></body></html>"))
         self.btnBrowse.setText(_translate("Form", " BROWSE"))
-        self.btnConvert.setText(_translate("Form", "CONVERT"))
+        self.btnConvert.setText(_translate("Form", " CONVERT"))
         self.lblPath.setText(_translate("Form", "Browse Files or folders"))
 
 def browseFile(self):
@@ -105,6 +114,8 @@ def avi_to_mp4(filePath):
     print(outputFile)
     print("converting avi to mp4")
     os.popen("ffmpeg -i '{input}' '{output}.mp4'".format(input=filePath, output=outputFile))
+    spinner = QtWaitingSpinner(self)
+    spinner.start()
     return True
 
 def avi_to_mkv(filePath):
@@ -149,8 +160,8 @@ def formatMessage(fileFormat):
     msg.setIcon(QMessageBox.Information)
 
     msg.setText("The file format {} is unsupported on this program. Please browse for another file".format(fileFormat))
-    msg.setInformativeText("View supported file formats")
-    msg.setDetailedText("The current available file formats are: \n - avi")
+    msg.setInformativeText("View supported file formats:")
+    msg.setDetailedText("The current available file formats are: \n - avi \n \n New Release coming soon.")
     msg.setWindowTitle("Error")
     msg.setStandardButtons(QMessageBox.Ok)
     retval = msg.exec_()
