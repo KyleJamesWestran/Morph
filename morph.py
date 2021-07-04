@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 import os
 import time
+import subprocess
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -103,55 +104,63 @@ def getFormat(self):
         if fileFormat == '.avi':
             if convertTo == 'mp4':
                 avi_to_mp4(self,filePath)
+                completeMessage(self)
             elif convertTo == 'mkv':
                 avi_to_mkv(filePath)
+                completeMessage(self)
             #elif convertTo == 'mpg':
                 #avi_to_mpg(filePath)
+            elif convertTo == 'mov':
+                avi_to_mov(filePath)
+                completeMessage(self)
             elif convertTo == 'wmv':
                 avi_to_wmv(filePath)
+                completeMessage(self)
+            else:
+                typeMessage()
         else:
             formatMessage(fileFormat)
 
+#Convert functions
 def avi_to_mp4(self, filePath):
-    '''self.progressBar.setValue(0)
-    count = 0'''
-
     outputFile = (filePath.rstrip(filePath[-4:]))
-    # print("converting avi to mp4")
-    '''progressTo = (1 / 2) * 100
-    count = updateBar(self.progressBar, count, progressTo)'''
-
-    os.popen("ffmpeg -i {input} {output}.mp4".format(input=filePath, output=outputFile))
-    '''progressTo = (2 / 2) * 100
-    count = updateBar(self.progressBar, count, progressTo)'''
-
-    #completeMessage(self)
+    #print("converting avi to mp4")
+    p = subprocess.Popen("ffmpeg -i {input} {output}.mp4".format(input=filePath, output=outputFile))
+    waitMessage()
+    p.wait()
     return True
 
 def avi_to_mkv(filePath):
     outputFile = (filePath.rstrip(filePath[-4:]))
     #print("converting avi to mkv")
-    os.popen("ffmpeg -i '{input}' '{output}.mkv'".format(input=filePath, output=outputFile))
+    p = subprocess.Popen("ffmpeg -i {input} {output}.mp4".format(input=filePath, output=outputFile))
+    waitMessage()
+    p.wait()
     return True
 
 def avi_to_mov(filePath):
     outputFile = (filePath.rstrip(filePath[-4:]))
     #print("converting avi to mov")
-    os.popen("ffmpeg -i '{input}' '{output}.mov'".format(input=filePath, output=outputFile))
+    p = subprocess.Popen("ffmpeg -i {input} {output}.mp4".format(input=filePath, output=outputFile))
+    waitMessage()
+    p.wait()
     return True
 
-def avi_to_mpg(filePath):
+'''def avi_to_mpg(filePath):
     outputFile = (filePath.rstrip(filePath[-4:]))
     #print("converting avi to mpg")
-    os.popen("ffmpeg -i '{input}' '{output}.mpg'".format(input=filePath, output=outputFile))
-    return True
+    os.popen("ffmpeg -i {input} {output}.mpg".format(input=filePath, output=outputFile))
+    return True'''
 
 def avi_to_wmv(filePath):
     outputFile = (filePath.rstrip(filePath[-4:]))
     #print("converting avi to wmv")
-    os.popen("ffmpeg -i '{input}' '{output}.wmv'".format(input=filePath, output=outputFile))
+    p = subprocess.Popen("ffmpeg -i {input} {output}.mp4".format(input=filePath, output=outputFile))
+    waitMessage()
+    p.wait()
     return True
 
+#Pop up messages
 def browseMessage():
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Information)
@@ -172,7 +181,16 @@ def formatMessage(fileFormat):
     msg.setStandardButtons(QMessageBox.Ok)
     retval = msg.exec_()
 
-'''def completeMessage(self):
+def typeMessage():
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Information)
+
+    msg.setText("Conversion Error. You tried to convert a video \nwith the same extention. Please choose another \nconversion format. ")
+    msg.setWindowTitle("Error")
+    msg.setStandardButtons(QMessageBox.Ok)
+    retval = msg.exec_()
+
+def completeMessage(self):
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Information)
 
@@ -180,14 +198,16 @@ def formatMessage(fileFormat):
     msg.setWindowTitle("Complete")
     msg.setStandardButtons(QMessageBox.Ok)
     retval = msg.exec_()
-    self.progressBar.setValue(0)'''
+    #self.progressBar.setValue(0)
 
-def updateBar(progress, count, progressTo):
-    while count < progressTo:
-        count += 1
-        time.sleep(0.03)
-        progress.setValue(count)
-    return count
+def waitMessage():
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Information)
+
+    msg.setText("Please wait: \n\nYour video is being converted.\nThis process may take up to 30 Minutes\ndepending on the length of the video.")
+    msg.setWindowTitle("Converting Video")
+    msg.setStandardButtons(QMessageBox.Ok)
+    retval = msg.exec_()
 
 if __name__ == "__main__":
     import sys
